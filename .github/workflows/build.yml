@@ -1,4 +1,4 @@
-name: CI
+name: Build
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -17,9 +17,11 @@ jobs:
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: 'stable'
-      - name: Install packages needed for GLFW
+      - name: Build APK
         run: |
-          sudo apt install -y libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl-dev libxxf86vm-dev
-      - name: Nimble build
-        run: |
-          nimble build -Y
+          nimble androidPackage -Y
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: Animythril
+          path: android/build/outputs/apk/debug/android-debug.apk
